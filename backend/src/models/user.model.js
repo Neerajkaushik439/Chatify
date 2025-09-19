@@ -12,12 +12,12 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        // required: true,
         minlegth: 6,
     },
-    phone: {
+    mobile: {
         type: String,
-        required: true,   // make it mandatory (optional if you don’t want it required)
+        // required: true,   
         unique: true,     // ensures no two users have the same phone number
     },
     provider: {

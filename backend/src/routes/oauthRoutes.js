@@ -13,7 +13,7 @@ router.get("/google/callback",
     (req, res) => {
         // issue JWT using your util
         generateToken(req.user._id, res);
-        res.redirect("http://localhost:5173/dashboard"); // frontend redirect
+        res.redirect("http://localhost:5173/"); // frontend redirect
     }
 );
 
