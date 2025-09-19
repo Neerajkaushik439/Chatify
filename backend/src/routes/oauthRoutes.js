@@ -1,7 +1,7 @@
 // routes/oauthRoutes.js
 import express from "express";
 import passport from "passport";
-import generateToken from "../utils/generateToken.js";
+import generateToken from "../lib/utils.js";
 
 const router = express.Router();
 

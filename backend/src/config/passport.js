@@ -1,9 +1,12 @@
 import passport from "passport";
-import GoogleStrategy from "passport-google-oauth20";
-import FacebookStrategy from "passport-facebook";
-import LinkedInStrategy from "passport-linkedin-oauth2";
-import User from "../models/userModel.js";  // your user schema
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as FacebookStrategy } from "passport-facebook";
+import { Strategy as LinkedInStrategy } from "passport-linkedin-oauth2";
 
+import User from "../models/user.model.js";  // your user schema
+import dotenv from "dotenv";
+
+dotenv.config();
 // Serialize & deserialize user
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -17,6 +20,14 @@ passport.deserializeUser(async (id, done) => {
     done(err, null);
   }
 });
+console.log(process.env.test);
+console.log("Google Client ID:", process.env.GOOGLE_CLIENT_ID);
+console.log("Google Client Secret:", process.env.GOOGLE_CLIENT_SECRET ? "Loaded ✅" : "Missing ❌");
+console.log("Facebook Client ID:", process.env.FB_CLIENT_ID);
+console.log("Facebook Client Secret:", process.env.FB_CLIENT_SECRET ? "Loaded ✅" : "Missing ❌");
+
+console.log("LinkedIn Client ID:", process.env.LINKEDIN_CLIENT_ID);
+console.log("LinkedIn Client Secret:", process.env.LINKEDIN_CLIENT_SECRET ? "Loaded ✅" : "Missing ❌");
 
 // ===== GOOGLE STRATEGY =====
 passport.use(
@@ -24,7 +35,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "http://localhost:5000/api/auth/oauth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

@@ -1,6 +1,8 @@
 import express from "express"
 import { getUSer, login, logout, signup, updatePfp } from "../controllers/auth.controller.js";
 import {fetchUser} from "../middlewares/fetchUser.js";
+import { updateUser ,deleteUser,getAllUsers} from "../controllers/auth.controller.js";
+
 
 const authRoute = express.Router();
 
