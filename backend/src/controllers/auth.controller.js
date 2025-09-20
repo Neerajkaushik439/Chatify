@@ -23,7 +23,15 @@ export const signup = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({ message: "User with this email or mobile already exists" });
+      if (existingUser.email === email) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+      if (existingUser.mobile === mobile) {
+        return res.status(400).json({ message: "Mobile number already exists" });
+      }
+      return res
+        .status(400)
+        .json({ message: "User with this email or mobile already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -55,12 +63,14 @@ export const signup = async (req, res) => {
 
 
 export const login = async (req, res) => {
-  const { email, mobile, password } = req.body;
+  let { email, mobile, password } = req.body;
 
   try {
     if ((!email && !mobile) || !password) {
       return res.status(400).json({ message: "Email or mobile and password are required" });
     }
+    if(!email)email = "";
+    if(!mobile)mobile = "";
 
     // find user by email or mobile
     const user = await User.findOne({
@@ -93,42 +103,42 @@ export const login = async (req, res) => {
 
 
 export const logout = async (req, res) => {
-    try {
-        res.clearCookie('token');
-        res.status(201).json({message: "logout successfully"});
-    } catch (error) {
-        console.log("error in logout controller", error.message);
-        res.status(500).json({message: "Internal server error"});
-    }
+  try {
+    res.clearCookie('token');
+    res.status(201).json({ message: "logout successfully" });
+  } catch (error) {
+    console.log("error in logout controller", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }
 
 export const updatePfp = async (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    const {pfp} = req.body;
-    const userId = req.user._id;
-    console.log(userId, "userId")
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  const { pfp } = req.body;
+  const userId = req.user._id;
+  console.log(userId, "userId")
 
-    if(!pfp) return res.status(400).json({message: " Profile pic required "});
-    try {
-        const uploadRes = await cloudinary.uploader.upload(pfp, {
-            folder: "profile_pictures",  
-            transformation: [{ width: 500, height: 500, crop: "limit" }] 
-        });
+  if (!pfp) return res.status(400).json({ message: " Profile pic required " });
+  try {
+    const uploadRes = await cloudinary.uploader.upload(pfp, {
+      folder: "profile_pictures",
+      transformation: [{ width: 500, height: 500, crop: "limit" }]
+    });
 
-        const updatedUser = await User.findByIdAndUpdate(
-            {_id:userId},
-            { pfp: uploadRes.secure_url },
-            { new: true }
-        );
-        console.log(updatedUser);
-        res.status(200).json(updatedUser);
-    } catch (error) {
-        console.error("Cloudinary Upload Error:", error);
-        res.status(500).json({ message: "Failed to upload image. Try again." });
-    }
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id: userId },
+      { pfp: uploadRes.secure_url },
+      { new: true }
+    );
+    console.log(updatedUser);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Cloudinary Upload Error:", error);
+    res.status(500).json({ message: "Failed to upload image. Try again." });
+  }
 
 }
 
@@ -185,12 +195,12 @@ export const getAllUsers = async (req, res) => {
 
 
 export const getUSer = async (req, res) => {
-    try {
-        const user = req.user
-        // console.log(user)
-        res.status(200).json(user);
-    } catch (error) {
-        console.log("error in get-user controller", error.message);
-        res.status(500).json({message: "Internal server error"});
-    }
+  try {
+    const user = req.user
+    // console.log(user)
+    res.status(200).json(user);
+  } catch (error) {
+    console.log("error in get-user controller", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }

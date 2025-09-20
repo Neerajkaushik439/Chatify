@@ -9,7 +9,7 @@ import {
   User,
   Phone,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaLinkedin } from "react-icons/fa";
@@ -58,6 +58,7 @@ const SignUp = () => {
     if (success === true) {
       signup(formData);
     }
+    
   };
 
   return (

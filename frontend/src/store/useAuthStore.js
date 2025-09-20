@@ -30,21 +30,23 @@ export const useAuthStore = create((set, get)=>({
         }
     },
 
-    signup : async (data)=>{
-        set({isSigningup : true});
-        try {
-            console.log(data)
-            const res = await Axios.post("/auth/signup", data);
-            set({authUser: res.data});
-            toast.success("Account created successfully ");
-            get().connectSocket();
-            
-        } catch (error) {
-            toast.error(error.response?.data?.message);
-        }finally{
-            set({isSigningup: false});
-        }
-    },
+   signup: async (formData) => {
+    set({ isSigningUp: true });
+    try {
+      await Axios.post("http://localhost:3000/api/auth/signup", formData);
+      set({ authUser: res.data });
+      get().connectSocket();
+      
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        alert(err.response.data.message); // <-- alert for duplicate email/mobile
+      } else {
+        alert("Something went wrong");
+      }
+    } finally {
+      set({ isSigningUp: false });
+    }
+  },
 
     login: async (data) => {
         set({ isLoggingIn: true });

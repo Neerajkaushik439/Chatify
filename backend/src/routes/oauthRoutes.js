@@ -24,7 +24,7 @@ router.get("/facebook/callback",
     passport.authenticate("facebook", { failureRedirect: "/login" }),
     (req, res) => {
         generateToken(req.user._id, res);
-        res.redirect("http://localhost:5173/dashboard");
+        res.redirect("http://localhost:5173/");
     }
 );
 

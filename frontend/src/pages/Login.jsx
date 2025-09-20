@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
-
 import {
   Eye,
   EyeOff,
@@ -8,35 +7,49 @@ import {
   Lock,
   Mail,
   MessageSquare,
-  Phone, // ADDED: phone icon
+  Phone, // changed label to Mobile
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook, FaLinkedin } from "react-icons/fa";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [loginWithPhone, setLoginWithPhone] = useState(false); // ADDED: toggle between email/phone
+  const [loginWithMobile, setLoginWithMobile] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
-    phone: "", // ADDED: phone field
+    mobile: "",
     password: "",
   });
 
   const { login, isLogginIn } = useAuthStore();
 
+  const backendURL = "http://localhost:3000"; // update if deployed
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${backendURL}/api/auth/oauth/google`;
+  };
+  const handleFacebookLogin = () => {
+    window.location.href = `${backendURL}/api/auth/oauth/facebook`;
+  };
+  const handleLinkedInLogin = () => {
+    window.location.href = `${backendURL}/api/auth/oauth/linkedin`;
+  };
+
   const validateForm = () => {
-    if (loginWithPhone) {
-      if (!formData.phone.trim()) return toast.error("Phone number is required");
-      const sanitizedPhone = formData.phone.replace(/\D/g, "");
-      if (sanitizedPhone.length !== 10)
-        return toast.error("Enter a valid 10-digit phone number");
+    if (loginWithMobile) {
+      if (!formData.mobile.trim())
+        return toast.error("Mobile number is required");
+      const sanitizedMobile = formData.mobile.replace(/\D/g, "");
+      if (sanitizedMobile.length !== 10)
+        return toast.error("Enter a valid 10-digit mobile number");
     } else {
       if (!formData.email.trim()) return toast.error("Email is required");
       if (!/\S+@\S+\.\S+/.test(formData.email))
         return toast.error("Invalid email format");
     }
-
     if (!formData.password) return toast.error("Password is required");
     return true;
   };
@@ -45,9 +58,8 @@ const Login = () => {
     e.preventDefault();
     const success = validateForm();
     if (success === true) {
-      // CHANGED: send either email+password or phone+password
-      const payload = loginWithPhone
-        ? { phone: formData.phone, password: formData.password }
+      const payload = loginWithMobile
+        ? { mobile: formData.mobile, password: formData.password }
         : { email: formData.email, password: formData.password };
 
       login(payload);
@@ -55,11 +67,10 @@ const Login = () => {
   };
 
   return (
-    // CHANGED: single-column centered layout
     <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
       <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-8 space-y-8">
         {/* LOGO */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-4">
           <div className="flex flex-col items-center gap-2 group">
             <div
               className="size-12 rounded-full bg-primary/10 flex items-center justify-center
@@ -67,36 +78,63 @@ const Login = () => {
             >
               <MessageSquare className="size-6 text-primary" />
             </div>
-            <h1 className="text-3xl font-extrabold mt-3 text-primary">Welcome Back</h1>
+            <h1 className="text-3xl font-extrabold mt-3 text-primary">
+              Welcome Back
+            </h1>
             <p className="text-base-content/70">Log in to continue</p>
           </div>
         </div>
 
+        {/* Social Login Buttons */}
+        <div className="space-y-3">
+          <button
+            onClick={handleGoogleLogin}
+            className="btn w-full flex items-center gap-2 bg-blue-600 text-white rounded-lg shadow-sm"
+          >
+            <FcGoogle size={22} /> Continue with Google
+          </button>
+          <button
+            onClick={handleFacebookLogin}
+            className="btn w-full flex items-center gap-2 bg-blue-600 text-white rounded-lg shadow-sm"
+          >
+            <FaFacebook size={22} /> Continue with Facebook
+          </button>
+          <button
+            onClick={handleLinkedInLogin}
+            className="btn w-full flex items-center gap-2 bg-blue-700 text-white rounded-lg shadow-sm"
+          >
+            <FaLinkedin size={22} /> Continue with LinkedIn
+          </button>
+        </div>
+
+        <div className="divider">Or log in with email / mobile</div>
+
+        {/* Email/Mobile Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Toggle: Email / Phone */}
+          {/* Toggle: Email / Mobile */}
           <div className="flex justify-center gap-4 mb-4">
             <button
               type="button"
-              onClick={() => setLoginWithPhone(false)}
+              onClick={() => setLoginWithMobile(false)}
               className={`px-4 py-2 rounded-lg ${
-                !loginWithPhone ? "bg-primary text-white" : "bg-base-200"
+                !loginWithMobile ? "bg-primary text-white" : "bg-base-200"
               }`}
             >
               Email
             </button>
             <button
               type="button"
-              onClick={() => setLoginWithPhone(true)}
+              onClick={() => setLoginWithMobile(true)}
               className={`px-4 py-2 rounded-lg ${
-                loginWithPhone ? "bg-primary text-white" : "bg-base-200"
+                loginWithMobile ? "bg-primary text-white" : "bg-base-200"
               }`}
             >
-              Phone
+              Mobile
             </button>
           </div>
 
           {/* Email Input */}
-          {!loginWithPhone && (
+          {!loginWithMobile && (
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-semibold">Email</span>
@@ -110,17 +148,19 @@ const Login = () => {
                   className="input input-bordered w-full pl-10 rounded-lg focus:ring-2 focus:ring-primary"
                   placeholder="you@example.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                 />
               </div>
             </div>
           )}
 
-          {/* Phone Input */}
-          {loginWithPhone && (
+          {/* Mobile Input */}
+          {loginWithMobile && (
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-semibold">Phone</span>
+                <span className="label-text font-semibold">Mobile</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -131,8 +171,10 @@ const Login = () => {
                   inputMode="tel"
                   className="input input-bordered w-full pl-10 rounded-lg focus:ring-2 focus:ring-primary"
                   placeholder="9876543210"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  value={formData.mobile}
+                  onChange={(e) =>
+                    setFormData({ ...formData, mobile: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -152,7 +194,9 @@ const Login = () => {
                 className="input input-bordered w-full pl-10 rounded-lg focus:ring-2 focus:ring-primary"
                 placeholder="••••••••"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
               />
               <button
                 type="button"
@@ -188,7 +232,7 @@ const Login = () => {
         {/* Footer */}
         <div className="text-center">
           <p className="text-base-content/70">
-            New Here?{" "}
+            New here?{" "}
             <Link to="/signup" className="link link-primary font-semibold">
               Sign Up
             </Link>
