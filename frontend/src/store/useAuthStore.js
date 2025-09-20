@@ -4,7 +4,9 @@ import toast from "react-hot-toast";
 import { Result } from "postcss";
 import {io} from 'socket.io-client'
 
-const BACKEND_URL = import.meta.env.MODE ==="development" ? 'http://localhost:5001' : import.meta.env.VITE_BACKEND_URL ;
+// In development the API base in this project runs on localhost:3000 (see README and axios baseURL).
+// Use the same backend origin for socket.io connections so the socket server is reachable.
+const BACKEND_URL = import.meta.env.MODE === "development" ? 'http://localhost:3000' : import.meta.env.VITE_BACKEND_URL;
 
 export const useAuthStore = create((set, get)=>({
     authUser : null,

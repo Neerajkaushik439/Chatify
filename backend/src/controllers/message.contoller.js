@@ -37,6 +37,7 @@ export const allMessage = async (req, res) => {
 export const sendMsg = async (req, res) => {
   const { text, mediaFiles } = req.body; // array of base64 strings or URLs
   try {
+    console.log(req.params.id, " iddddd")
     const reciverId = req.params.id;
     const senderId = req.user._id;
 

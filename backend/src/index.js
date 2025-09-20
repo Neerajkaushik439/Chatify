@@ -10,7 +10,8 @@ import session from "express-session";
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+// Use PORT from env or default to 3000 for local development
+const PORT = process.env.PORT || 3000;
 
 import authRoute from "./routes/auth.route.js";
 import messageRoute from "./routes/message.route.js";
