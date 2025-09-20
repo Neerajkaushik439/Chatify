@@ -16,8 +16,8 @@ const msgSchema = new mongoose.Schema({
     default: "",               // optional, can be empty if only media
   },
   media: [{   
-    url: String,                  // array to support multiple files/videos
-    type: String,
+    url: { type: String },        // array to support multiple files/videos
+    type: { type: String },
   }],
 }, { timestamps: true });
 

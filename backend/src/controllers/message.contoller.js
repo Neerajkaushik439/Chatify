@@ -1,4 +1,4 @@
-import cloudinary from "../lib/cloudniary.js";
+import cloudinary, { uploadMedia } from "../lib/cloudniary.js";
 import { getReciverSocketId, io } from "../lib/socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
@@ -45,11 +45,29 @@ export const sendMsg = async (req, res) => {
 
     if (mediaFiles?.length > 0) {
       for (const file of mediaFiles) {
-        const uploadRes = await cloudinary.uploader.upload(file, {
-          folder: "chat_media",
-          resource_type: "auto", // auto detects image/video/document
-        });
-        uploadedMedia.push({ url: uploadRes.secure_url, type: uploadRes.resource_type });
+        try {
+          const uploadRes = await uploadMedia(file, {
+            folder: "chat_media",
+            resource_type: "auto",
+          });
+          uploadedMedia.push({ url: uploadRes.secure_url, type: uploadRes.resource_type });
+        } catch (uploadErr) {
+          console.error("upload error for file", uploadErr.message || uploadErr);
+          // If an upload fails, still continue — we won't attach that file.
+        }
+      }
+    }
+
+    // Ensure uploadedMedia is an array of { url, type }
+    let mediaToSave = [];
+    if (Array.isArray(uploadedMedia)) {
+      mediaToSave = uploadedMedia.map((m) => ({ url: m.url, type: m.type }));
+    } else if (typeof uploadedMedia === "string") {
+      try {
+        const parsed = JSON.parse(uploadedMedia);
+        if (Array.isArray(parsed)) mediaToSave = parsed.map((m) => ({ url: m.url, type: m.type }));
+      } catch (e) {
+        // ignore parsing error and leave mediaToSave empty
       }
     }
 
@@ -57,7 +75,7 @@ export const sendMsg = async (req, res) => {
       senderId,
       reciverId,
       text,
-      media: uploadedMedia,
+      media: mediaToSave,
     });
 
     await newMsg.save();
