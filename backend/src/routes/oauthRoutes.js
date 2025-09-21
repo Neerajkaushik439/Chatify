@@ -15,8 +15,8 @@ router.get("/google/callback",
     (req, res) => {
         console.log("here inside oauth");
         // issue JWT using your util
-        const token = generateToken(req.user._id, res);
-        res.redirect(`https://chatify-psi-hazel.vercel.app/auth/calbacktoken=${token}`); // frontend redirect
+        const token = generateToken(req.user._id, res);     
+        res.redirect(`https://chatify-psi-hazel.vercel.app/auth/callback?token=${token}`); // frontend redirect
     }
 );
 
