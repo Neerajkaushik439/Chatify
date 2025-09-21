@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaLinkedin } from "react-icons/fa";
+const backendURL = import.meta.env.MODE === "development" ? 'http://localhost:3000' : import.meta.env.VITE_BACKEND_URL;
+
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +28,7 @@ const Login = () => {
 
   const { login, isLogginIn } = useAuthStore();
 
-  const backendURL = "http://localhost:3000"; // update if deployed
+  // const backendURL = {process.env "http://localhost:3000"}; // update if deployed
 
   const handleGoogleLogin = () => {
     window.location.href = `${backendURL}/api/auth/oauth/google`;
