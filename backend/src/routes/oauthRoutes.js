@@ -11,6 +11,7 @@ router.get("/google", passport.authenticate("google", { scope: ["profile", "emai
 router.get("/google/callback",
     passport.authenticate("google", { failureRedirect: "/login" }),
     (req, res) => {
+        console.log("here inside oauth");
         // issue JWT using your util
         generateToken(req.user._id, res);
         res.redirect("https://chatify-psi-hazel.vercel.app/"); // frontend redirect
