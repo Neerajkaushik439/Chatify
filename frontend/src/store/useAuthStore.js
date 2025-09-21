@@ -21,7 +21,12 @@ export const useAuthStore = create((set, get)=>({
 
     checkAuth: async()=>{
         try {
-            const res = await Axios.get("/auth/get-user");
+            const token = localStorage.getItem("authToken");
+            const res = await Axios.get("/auth/get-user", {
+                headers: {
+                    Authorization: `Bearer ${token}`, // include token in headers
+                },
+            });
 
             set({authUser: res.data});
             get().connectSocket();

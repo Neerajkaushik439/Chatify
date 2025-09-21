@@ -3,9 +3,17 @@ import User from "../models/user.model.js";
 
 export const  fetchUser = async (req, res, next) => {
     try {
-            const token = req.cookies.token;
+        let token;
 
-            if(!token) return res.status(401).json({message:"No token provided"});
+        // 1. Check Authorization header
+        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+            token = req.headers.authorization.split(" ")[1]; // "Bearer <token>"
+        }
+
+        // 2. Fallback: check cookie (optional)
+        if (!token && req.cookies.token) {
+            token = req.cookies.token;
+        }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
