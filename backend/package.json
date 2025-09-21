@@ -14,10 +14,10 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "esbuild": "^0.18.20",
     "nodemon": "^3.1.9"
   },
   "dependencies": {
+    "esbuild": "^0.18.20",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
