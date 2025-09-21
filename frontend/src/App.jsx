@@ -14,6 +14,7 @@ import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 import { useThemeStore } from "./store/useThemeStore.js";
 import Layout from "./Layout.jsx";
+import AuthCallback from "./auth/callback/page.jsx";
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -39,6 +40,7 @@ const App = () => {
 
 
         <Routes>
+          <Route path="/login/success" element={<AuthCallback />} />
           <Route element={<Layout />}>
             <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
             <Route path="/settings" element={<Settings />} />
