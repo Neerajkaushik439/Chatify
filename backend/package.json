@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-  "dev": "nodemon src/index.js",
-  "start": "node src/index.js",
-  "build": "esbuild src/index.js --bundle --platform=node --outfile=dist/index.js --external:dotenv --external:cloudinary --external:mongoose --format=esm --sourcemap",
-  "start:prod": "node dist/index.js"
-    
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "build": "esbuild src/index.js --bundle --platform=node --outfile=dist/index.js --external:dotenv --external:cloudinary --external:mongoose --format=esm --sourcemap",
+    "start:prod": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -15,8 +14,8 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "nodemon": "^3.1.9",
-    "esbuild": "^0.18.16"
+    "esbuild": "^0.18.20",
+    "nodemon": "^3.1.9"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
