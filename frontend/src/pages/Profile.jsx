@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { Camera, Mail, User, Phone, Edit2, Save } from "lucide-react";
 
 const Profile = () => {
-  const { authUser, isUpdatingPfp, updatePfp } = useAuthStore();
+  const { authUser, isUpdatingPfp, updatePfp, updateUserProfile, isUpdatingProfile } = useAuthStore();
 
   const [selectedImg, setSelectedImg] = useState(null);
   const [isEditingName, setIsEditingName] = useState(false);
   const [newName, setNewName] = useState(authUser?.fullname || "");
+
+  // keep the input synced if authUser changes (for example after login or refresh)
+  useEffect(() => {
+    setNewName(authUser?.fullname || "");
+  }, [authUser]);
 
   // Handle Profile Picture Upload
   const handleImageUpload = async (e) => {
@@ -29,10 +34,8 @@ const Profile = () => {
   const handleSaveName = async () => {
     try {
       // Call backend API / store method to update user fullname
-      // Example: await updateProfile({ fullname: newName });
-      console.log("Saving new name:", newName);
-
-      // After saving, exit edit mode
+      await updateUserProfile({ fullname: newName });
+      // reflect locally as well
       setIsEditingName(false);
     } catch (error) {
       console.error("Error updating name:", error);

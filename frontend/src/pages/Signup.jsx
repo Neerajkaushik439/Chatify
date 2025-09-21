@@ -84,18 +84,7 @@ const SignUp = () => {
           >
             <FcGoogle size={22} /> Continue with Google
           </button>
-          <button
-            onClick={handleFacebookLogin}
-            className="btn w-full flex items-center gap-2 bg-blue-600 text-white rounded-lg shadow-sm"
-          >
-            <FaFacebook size={22} /> Continue with Facebook
-          </button>
-          <button
-            onClick={handleLinkedInLogin}
-            className="btn w-full flex items-center gap-2 bg-blue-700 text-white rounded-lg shadow-sm"
-          >
-            <FaLinkedin size={22} /> Continue with LinkedIn
-          </button>
+          
         </div>
 
         <div className="divider">Or sign up with email</div>

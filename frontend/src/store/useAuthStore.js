@@ -13,6 +13,7 @@ export const useAuthStore = create((set, get)=>({
     isSigningup : false,
     isLogginIn: false,
     isUpdatingPfp: false,
+    isUpdatingProfile: false,
     isCheckingAuth: true,
     onlineUsers: [],
     socket: null,
@@ -84,6 +85,23 @@ export const useAuthStore = create((set, get)=>({
             toast.error(error.response.data.message);
         } finally {
           set({ isUpdatingPfp: false });
+        }
+    },
+
+    updateUserProfile: async (data) => {
+        try {
+            set({ isUpdatingProfile: true });
+            const userId = get().authUser?._id;
+            if (!userId) throw new Error('Not authenticated');
+            const res = await Axios.put(`/auth/user/${userId}`, data);
+            set({ authUser: res.data });
+            toast.success('Profile updated');
+            return res.data;
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+            throw error;
+        } finally {
+            set({ isUpdatingProfile: false });
         }
     },
 
