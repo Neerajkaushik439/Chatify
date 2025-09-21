@@ -25,7 +25,7 @@ const corsOptions = {
     "http://localhost:19006", // Expo Go
     "exp://127.0.0.1:19000",  // Expo Dev Client
     "http://localhost:3000",
-    "https://chat-app-neon-theta.vercel.app",
+    "https://chatify-psi-hazel.vercel.app",
   ],
   credentials: true,
   optionSuccessStatus: 200,
