@@ -37,49 +37,63 @@ export const allMessage = async (req, res) => {
 export const sendMsg = async (req, res) => {
   const { text, mediaFiles } = req.body; // array of base64 strings or URLs
   try {
-    console.log(req.params.id, " iddddd")
+    console.log(req.params.id, " iddddd");
+    console.log("req.body keys:", Object.keys(req.body || {}));
+    console.log("typeof mediaFiles:", typeof mediaFiles);
+    if (Array.isArray(mediaFiles) && mediaFiles.length > 0) {
+      console.log("first media item keys:", Object.keys(mediaFiles[0] || {}));
+      if (typeof mediaFiles[0] === "string") {
+        console.log("first media string length:", mediaFiles[0].length);
+      } else if (mediaFiles[0].data) {
+        console.log("first media data length:", String(mediaFiles[0].data).length);
+      }
+    }
     const reciverId = req.params.id;
     const senderId = req.user._id;
 
     let uploadedMedia = [];
-
+    console.log("sendMsg called. mediaFiles length:", mediaFiles ? mediaFiles.length : 0);
     if (mediaFiles?.length > 0) {
       for (const file of mediaFiles) {
         try {
-          const uploadRes = await uploadMedia(file.data, {
+          // file is expected to be { data: dataUrl, type, name }
+          const input = file.data || file; // support both direct data string or object
+          const uploadRes = await uploadMedia(input, {
             folder: "chat_media",
             resource_type: "auto",
-            public_id: file.name?.split(".")[0], // optional: use filename
+            public_id: file?.name?.split(".")[0], // optional: use filename
           });
-          uploadedMedia.push({
-            url: uploadRes.secure_url,
-            type: uploadRes.resource_type,
-            name: file.name,
-          });
+          const url = uploadRes.secure_url || uploadRes.url || null;
+          const type = uploadRes.resource_type || file.type || (url && url.startsWith("data:video") ? "video" : "image");
+          uploadedMedia.push({ url, type, name: file?.name });
+          console.log("uploaded file:", { name: file?.name, url, type });
         } catch (uploadErr) {
-          console.error("upload error for file", uploadErr.message || uploadErr);
+          console.error("upload error for file", uploadErr && (uploadErr.message || uploadErr));
         }
       }
+      console.log("all uploadedMedia:", uploadedMedia);
     }
 
     // Ensure uploadedMedia is an array of { url, type }
     let mediaToSave = [];
     if (Array.isArray(uploadedMedia)) {
-      mediaToSave = uploadedMedia.map((m) => ({ url: m.url, type: m.type }));
+      mediaToSave = uploadedMedia.filter((m) => m && m.url).map((m) => ({ url: m.url, type: m.type }));
     } else if (typeof uploadedMedia === "string") {
       try {
         const parsed = JSON.parse(uploadedMedia);
-        if (Array.isArray(parsed)) mediaToSave = parsed.map((m) => ({ url: m.url, type: m.type }));
+        if (Array.isArray(parsed)) mediaToSave = parsed.filter((m) => m && m.url).map((m) => ({ url: m.url, type: m.type }));
       } catch (e) {
         // ignore parsing error and leave mediaToSave empty
       }
     }
 
+    console.log("mediaToSave (will be persisted):", mediaToSave);
+
     const newMsg = new Message({
       senderId,
       reciverId,
       text,
-      media: uploadedMedia.map((m) => m.url), // only store URLs
+      media: mediaToSave.map((m) => m.url), // store only URLs in DB
     });
 
     await newMsg.save();
