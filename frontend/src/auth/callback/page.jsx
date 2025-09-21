@@ -9,6 +9,7 @@ const AuthCallback = () => {
         // Create a URLSearchParams object to easily access query parameters
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
+        console.log(token, "is ther e token")
 
         if (token) {
             console.log("Token received from URL:", token);
@@ -17,7 +18,7 @@ const AuthCallback = () => {
 
             // Redirect user to the main dashboard or home page
             // The replace: true option prevents the user from going back to this page
-            navigate('/', { replace: true });
+            navigate('/' , { replace: true });
         } else {
             // Handle the case where no token was provided
             console.error("Authentication failed, no token found.");

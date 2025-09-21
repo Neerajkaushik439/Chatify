@@ -40,7 +40,7 @@ const App = () => {
 
 
         <Routes>
-          <Route path="/login/success" element={<AuthCallback />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route element={<Layout />}>
             <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
             <Route path="/settings" element={<Settings />} />
