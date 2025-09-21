@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 const ChatInput = () => {
   const [text, setText] = useState("");
-  const [previews, setPreviews] = useState([]); // { name, type, data }
+  const [previews, setPreviews] = useState([]); // [{ name, type, data }]
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
 
@@ -14,12 +14,18 @@ const ChatInput = () => {
     if (files.length === 0) return;
 
     const newPreviews = [];
+
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        newPreviews.push({ name: file.name, type: file.type, data: reader.result });
-        // when all files processed, update state
-        if (newPreviews.length === files.length) setPreviews((p) => [...p, ...newPreviews]);
+        newPreviews.push({
+          name: file.name,
+          type: file.type,
+          data: reader.result,
+        });
+        if (newPreviews.length === files.length) {
+          setPreviews((prev) => [...prev, ...newPreviews]);
+        }
       };
       reader.readAsDataURL(file);
     });
@@ -35,10 +41,13 @@ const ChatInput = () => {
     if (!text.trim() && previews.length === 0) return;
 
     try {
-      // send mediaFiles as array of base64/data urls
       await sendMessage({
         text: text.trim(),
-        mediaFiles: previews.map((p) => p.data),
+        mediaFiles: previews.map((p) => ({
+          data: p.data,
+          type: p.type,
+          name: p.name,
+        })),
       });
 
       // Clear form
@@ -53,8 +62,9 @@ const ChatInput = () => {
 
   return (
     <div className="p-4 w-full">
+      {/* File Previews */}
       {previews.length > 0 && (
-        <div className="mb-3 flex items-center gap-2">
+        <div className="mb-3 flex items-center gap-2 flex-wrap">
           {previews.map((p, idx) => (
             <div key={idx} className="relative">
               {p.type.startsWith("image/") ? (
@@ -64,10 +74,14 @@ const ChatInput = () => {
                   className="w-20 h-20 object-cover rounded-lg border border-zinc-700"
                 />
               ) : p.type.startsWith("video/") ? (
-                <video src={p.data} className="w-28 h-20 rounded-lg" controls />
+                <video
+                  src={p.data}
+                  className="w-28 h-20 rounded-lg border border-zinc-700"
+                  controls
+                />
               ) : (
                 <div className="w-28 h-20 rounded-lg border border-zinc-700 flex items-center justify-center p-2">
-                  <span className="text-sm text-zinc-400">{p.name}</span>
+                  <span className="text-sm text-zinc-400 truncate">{p.name}</span>
                 </div>
               )}
               <button
@@ -82,6 +96,7 @@ const ChatInput = () => {
         </div>
       )}
 
+      {/* Input + Actions */}
       <form onSubmit={handleSendMessage} className="flex items-center gap-2">
         <div className="flex-1 flex gap-2">
           <input
@@ -91,6 +106,8 @@ const ChatInput = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
+
+          {/* Hidden file input */}
           <input
             type="file"
             accept="image/*,video/*,application/*"
@@ -100,15 +117,19 @@ const ChatInput = () => {
             onChange={handleFilesChange}
           />
 
+          {/* File upload button */}
           <button
             type="button"
-            className={`hidden sm:flex btn btn-circle
-                     ${previews.length > 0 ? "text-emerald-500" : "text-zinc-400"}`}
+            className={`hidden sm:flex btn btn-circle ${
+              previews.length > 0 ? "text-emerald-500" : "text-zinc-400"
+            }`}
             onClick={() => fileInputRef.current?.click()}
           >
             <Image size={20} />
           </button>
         </div>
+
+        {/* Send button */}
         <button
           type="submit"
           className="btn btn-sm btn-circle"
@@ -120,4 +141,5 @@ const ChatInput = () => {
     </div>
   );
 };
+
 export default ChatInput;

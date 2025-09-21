@@ -5,14 +5,14 @@ import User from "../models/user.model.js";
 
 
 export const allUser = async (req, res) => {
-    try {
-        const loggedUSer = req.user._id;
-        const allusers = await User.find({_id: { $ne : loggedUSer}}).select("-password");
-        res.status(200).json(allusers);
-    } catch (error) {
-        console.log("error in allUSer controller", error.message);
-        res.status(500).json({message: "Internal server error"});
-    }    
+  try {
+    const loggedUSer = req.user._id;
+    const allusers = await User.find({ _id: { $ne: loggedUSer } }).select("-password");
+    res.status(200).json(allusers);
+  } catch (error) {
+    console.log("error in allUSer controller", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }
 
 export const allMessage = async (req, res) => {
@@ -46,14 +46,18 @@ export const sendMsg = async (req, res) => {
     if (mediaFiles?.length > 0) {
       for (const file of mediaFiles) {
         try {
-          const uploadRes = await uploadMedia(file, {
+          const uploadRes = await uploadMedia(file.data, {
             folder: "chat_media",
             resource_type: "auto",
+            public_id: file.name?.split(".")[0], // optional: use filename
           });
-          uploadedMedia.push({ url: uploadRes.secure_url, type: uploadRes.resource_type });
+          uploadedMedia.push({
+            url: uploadRes.secure_url,
+            type: uploadRes.resource_type,
+            name: file.name,
+          });
         } catch (uploadErr) {
           console.error("upload error for file", uploadErr.message || uploadErr);
-          // If an upload fails, still continue — we won't attach that file.
         }
       }
     }
@@ -75,7 +79,7 @@ export const sendMsg = async (req, res) => {
       senderId,
       reciverId,
       text,
-      media: mediaToSave,
+      media: uploadedMedia.map((m) => m.url), // only store URLs
     });
 
     await newMsg.save();

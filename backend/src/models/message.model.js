@@ -15,10 +15,10 @@ const msgSchema = new mongoose.Schema({
     type: String,
     default: "",               // optional, can be empty if only media
   },
-  media: [{   
-    url: { type: String },        // array to support multiple files/videos
-    type: { type: String },
-  }],
+  media: {
+    type: [String], // just array of URLs
+    default: [],
+  },
 }, { timestamps: true });
 
 const Message = mongoose.model("Message", msgSchema);
