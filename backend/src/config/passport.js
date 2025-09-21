@@ -28,7 +28,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/api/auth/oauth/google/callback",
+      callbackURL: "https://chatify-la5y.onrender.com/api/auth/oauth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
