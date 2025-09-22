@@ -11,7 +11,7 @@ authRoute.post("/login", login);
 authRoute.post("/logout", logout);
 authRoute.put("/update-pfp", fetchUser, updatePfp);
 authRoute.get("/get-user", fetchUser, getUSer);
-
+authRoute.put("/user/:id", updateUser);
 
 
 authRoute.delete("/user/:id", fetchUser, (req, res, next) => {
