@@ -78,6 +78,7 @@ const SignUp = () => {
         </div>
 
         {/* Social Login Buttons */}
+        {/*
         <div className="space-y-3">
           <button
             onClick={handleGoogleLogin}
@@ -89,6 +90,7 @@ const SignUp = () => {
         </div>
 
         <div className="divider">Or sign up with email</div>
+        */}
 
         {/* Email/Mobile Form */}
         <form onSubmit={handleSubmit} className="space-y-6">

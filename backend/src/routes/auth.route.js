@@ -13,13 +13,6 @@ authRoute.put("/update-pfp", fetchUser, updatePfp);
 authRoute.get("/get-user", fetchUser, getUSer);
 
 
-// --- NEW CRUD routes for user themselves ---
-authRoute.put("/user/:id", fetchUser, (req, res, next) => {
-  if (req.user._id.toString() !== req.params.id) {
-    return res.status(403).json({ message: "Forbidden: You can only update your own account" });
-  }
-  next();
-}, updateUser);
 
 authRoute.delete("/user/:id", fetchUser, (req, res, next) => {
   if (req.user._id.toString() !== req.params.id) {

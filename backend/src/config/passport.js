@@ -28,7 +28,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://chatify-psi-hazel.vercel.app/auth/callback",
+      callbackURL: "https://chatify-psi-hazel.vercel.app/api/auth/oauth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
