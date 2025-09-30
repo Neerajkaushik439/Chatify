@@ -28,7 +28,6 @@ const Login = () => {
 
   const { login, isLogginIn } = useAuthStore();
 
-  // const backendURL = {process.env "http://localhost:3000"}; // update if deployed
 
   const handleGoogleLogin = () => {
     window.location.href = `${backendURL}/api/auth/oauth/google`;

@@ -21,7 +21,7 @@ app.use(cookieParser());
 
 const corsOptions = {
   origin: [
-    "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:19006", // Expo Go
     "exp://127.0.0.1:19000",  // Expo Dev Client
     "http://localhost:3000",
